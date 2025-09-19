@@ -1,0 +1,51 @@
+name: Scoop Integration Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      SCOOP_REPO:
+        description: 'SCOOP_REPO'
+        required: false
+        default: 'https://github.com/ScoopInstaller/Scoop.git'
+        type: string
+      SCOOP_BRANCH:
+        description: 'SCOOP_BRANCH'
+        required: false
+        default: 'master'
+        type: string
+
+jobs:
+  test_powershell:
+    name: PowerShell 5
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Init Test Suite
+        uses: potatoqualitee/psmodulecache@main
+        with:
+          modules-to-cache: BuildHelpers
+          shell: powershell
+      - name: Integration Test
+        shell: powershell
+        run: ./bin/integration-test.ps1
+        env:
+          SCOOP_REPO: ${{ github.event.inputs.SCOOP_REPO}}
+          SCOOP_BRANCH: ${{ github.event.inputs.SCOOP_BRANCH }}
+  test_pwsh:
+    name: PowerShell 7
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Init Test Suite
+        uses: potatoqualitee/psmodulecache@main
+        with:
+          modules-to-cache: BuildHelpers
+          shell: pwsh
+      - name: Integration Test
+        shell: pwsh
+        run: ./bin/integration-test.ps1
+        env:
+          SCOOP_REPO: ${{ github.event.inputs.SCOOP_REPO}}
+          SCOOP_BRANCH: ${{ github.event.inputs.SCOOP_BRANCH }}
